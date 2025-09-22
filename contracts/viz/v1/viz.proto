@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package contracts.viz.v1;
+
+option go_package = "chart-organizer/backend/gen/contracts/viz/v1;vizv1";
+
+// Visualization represents a configured plot.
+message Visualization {
+    int32 id = 1;
+    int32 user_id = 2;
+    int32 dataset_id = 3;
+    string plot_type = 4;
+    string config = 5;
+    string created_at = 6;
+}

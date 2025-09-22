@@ -1,0 +1,9 @@
+# Rudimentary CSV storage
+storage/
+
+# Copilot instruction files: in the future if something is actually important
+# - for example, CI/CD - then feel free to update this
+.github/
+
+# Environment variables
+*.env

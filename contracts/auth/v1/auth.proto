@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package contracts.auth.v1;
+
+option go_package = "chart-organizer/backend/gen/contracts/auth/v1;authv1";
+
+// User represents a user in the system.
+message User {
+    int32 id = 1;
+    string username = 2;
+    string password_hash = 3;
+    string created_at = 4;
+}
+
+// Requests and Responses
+message SignupRequest {
+    string username = 1;
+    string password = 2;
+}
+
+message SignupResponse {
+    string jwt_token = 2;
+    string error = 3;
+}
+
+message LoginRequest {
+    string username = 1;
+    string password = 2;
+}
+
+message LoginResponse {
+    string jwt_token = 1;
+    string error = 2;
+}
+
+// Define similar messages for Login, UploadDataset, CreateVisualization, etc.
+service AuthService {
+    rpc Signup(SignupRequest) returns (SignupResponse) {}
+    rpc Login(LoginRequest) returns (LoginResponse) {}
+}
