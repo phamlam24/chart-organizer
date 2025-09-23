@@ -4,12 +4,51 @@ package contracts.viz.v1;
 
 option go_package = "chart-organizer/backend/gen/contracts/viz/v1;vizv1";
 
-// Visualization represents a configured plot.
+message ParallelCoordinates {
+    string title = 1;
+    repeated string columns = 2;
+}
+
+message Scatterplot {
+    string title = 1;
+    string column_x = 2;
+    string column_y = 3;
+}
+
+message LinePlot {
+    string title = 1;
+    string column_x = 2;
+    string column_y = 3;
+}
+
 message Visualization {
-    int32 id = 1;
-    int32 user_id = 2;
-    int32 dataset_id = 3;
-    string plot_type = 4;
-    string config = 5;
-    string created_at = 6;
+    string type = 1;
+    oneof plot {
+        ParallelCoordinates parallel_coordinates = 2;
+        Scatterplot scatterplot = 3;
+        LinePlot lineplot = 4;
+    }
+}
+
+message CreateDashboardRequest {
+    repeated Visualization visualizations = 1;
+    string dataset_id = 2;
+}
+
+message CreateDashboardResponse {
+    string id = 1;
+}
+
+message GetDashboardRequest {
+    string id = 1;
+}
+
+message GetDashboardResponse {
+    repeated Visualization visualizations = 1;
+    string dataset_id = 2;
+}
+
+service DashboardService {
+    rpc CreateDashboard(CreateDashboardRequest) returns (CreateDashboardResponse) {}
+    rpc GetDashboard(GetDashboardRequest) returns (GetDashboardResponse) {}
 }

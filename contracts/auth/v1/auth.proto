@@ -20,7 +20,6 @@ message SignupRequest {
 
 message SignupResponse {
     string jwt_token = 2;
-    string error = 3;
 }
 
 message LoginRequest {
@@ -30,7 +29,6 @@ message LoginRequest {
 
 message LoginResponse {
     string jwt_token = 1;
-    string error = 2;
 }
 
 // Define similar messages for Login, UploadDataset, CreateVisualization, etc.

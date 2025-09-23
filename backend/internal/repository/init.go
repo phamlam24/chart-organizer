@@ -7,7 +7,7 @@ import (
 func InitDatabase(db *sql.DB) error {
 	// Create each table
 	createUserTbl := `CREATE TABLE IF NOT EXISTS users 
-					(id INTEGER NOT NULL PRIMARY KEY, 
+					(id TEXT NOT NULL PRIMARY KEY, 
 					username TEXT NOT NULL UNIQUE,
 					password_hash TEXT NOT NULL,
 					created_at TEXT NOT NULL
@@ -18,10 +18,9 @@ func InitDatabase(db *sql.DB) error {
 	}
 
 	createDatasetTbl := `CREATE TABLE IF NOT EXISTS datasets
-						(id INTEGER NOT NULL PRIMARY KEY,
-						user_id INTEGER NOT NULL,
-						filename TEXT NOT NULL,
-						filepath TEXT NOT NULL,
+						(id TEXT NOT NULL PRIMARY KEY,
+						user_id TEXT NOT NULL,
+						name TEXT NOT NULL,
 						created_at TEXT NOT NULL,
 						FOREIGN KEY (user_id) REFERENCES users (id)
 						);`
@@ -30,17 +29,14 @@ func InitDatabase(db *sql.DB) error {
 		return err
 	}
 
-	createVizTbl := `CREATE TABLE IF NOT EXISTS visualizations
-						(id INTEGER NOT NULL PRIMARY KEY, 
-						user_id INTEGER NOT NULL,
-						dataset_id INTEGER NOT NULL,
-						plot_type TEXT NOT NULL,
-						config TEXT NOT NULL,
+	createDashboardTbl := `CREATE TABLE IF NOT EXISTS dashboards
+						(id TEXT NOT NULL PRIMARY KEY, 
+						dataset_id TEXT NOT NULL,
+						visualizations TEXT NOT NULL,
 						created_at TEXT NOT NULL,
-						FOREIGN KEY (user_id) REFERENCES users (id),
 						FOREIGN KEY (dataset_id) REFERENCES datasets (id)
 						);`
-	_, err = db.Exec(createVizTbl)
+	_, err = db.Exec(createDashboardTbl)
 	if err != nil {
 		return err
 	}

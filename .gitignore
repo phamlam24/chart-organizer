@@ -7,3 +7,6 @@ storage/
 
 # Environment variables
 *.env
+
+# Example files used for debugging
+examples/

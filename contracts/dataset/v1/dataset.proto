@@ -4,11 +4,38 @@ package contracts.dataset.v1;
 
 option go_package = "chart-organizer/backend/gen/contracts/dataset/v1;datasetv1";
 
-// Dataset represents an uploaded CSV file.
-message Dataset {
-    int32 id = 1;
-    int32 user_id = 2;
-    string filename = 3;
-    string filepath = 4;
-    string created_at = 5;
+message UploadDatasetRequest {
+    string filename = 1;
+    bytes data = 2;
+}
+
+message UploadDatasetResponse {
+    string id = 1;
+}
+
+message GetDatasetRequest {
+    string id = 1;
+}
+
+message GetDatasetResponse {
+    bytes data = 1;
+}
+
+message GetAllDatasetsFromUser_Dataset {
+    string id = 1;
+    string name = 2;
+}
+
+message GetAllDatasetsFromUserRequest {
+    
+}
+
+message GetAllDatasetsFromUserResponse {
+    repeated GetAllDatasetsFromUser_Dataset datasets = 1;
+}
+
+service DatasetService {
+    rpc UploadDataset(UploadDatasetRequest) returns (UploadDatasetResponse) {}
+    rpc GetDataset(GetDatasetRequest) returns (GetDatasetResponse) {}
+    rpc GetAllDatasetsFromUser(GetAllDatasetsFromUserRequest) returns (GetAllDatasetsFromUserResponse) {}
 }
