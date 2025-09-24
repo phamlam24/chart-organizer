@@ -6,7 +6,7 @@ storage/
 .github/
 
 # Environment variables
-*.env
+*.env*
 
 # Example files used for debugging
 examples/
