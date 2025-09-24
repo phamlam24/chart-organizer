@@ -24,8 +24,8 @@ func main() {
 	}
 	defer db.Close()
 
-	// Try to read and print the users table
-	rows, err := db.Query("SELECT id, username FROM users")
+	// Try to read and print the dashboards table
+	rows, err := db.Query("SELECT id, visualizations FROM dashboards")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -33,12 +33,12 @@ func main() {
 
 	for rows.Next() {
 		var id string
-		var username string
-		err := rows.Scan(&id, &username)
+		var visualizations string
+		err := rows.Scan(&id, &visualizations)
 		if err != nil {
 			log.Fatal(err)
 		}
-		slog.Info("User details", "ID", id, "Username", username)
+		slog.Info("Viz details", "ID", id, "visualizations", visualizations)
 	}
 
 	if err = rows.Err(); err != nil {

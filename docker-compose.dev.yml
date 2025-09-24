@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  backend-dev:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - JWT_KEY=dev-secret-key
+      - PORT=8080
+      - DB_PATH=./storage/chart-organizer.db
+      - DATASET_STORAGE_PATH=./storage/datasets
+    volumes:
+      - ./storage:/root/storage
+      - ./backend:/root/app:ro  # Mount source for development
+    networks:
+      - chart-organizer-network
+    command: ["go", "run", "/root/app/cmd/main.go"]
+    working_dir: /root
+
+  frontend-dev:
+    build:
+      context: ./frontend
+      target: builder  # Use only the builder stage
+    ports:
+      - "5173:5173"  # Vite dev server port
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8080
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - chart-organizer-network
+    command: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+    depends_on:
+      - backend-dev
+
+networks:
+  chart-organizer-network:
+    driver: bridge

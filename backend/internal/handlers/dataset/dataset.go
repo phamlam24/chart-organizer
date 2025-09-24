@@ -2,7 +2,7 @@ package dataset
 
 import (
 	datasetv1 "chart-organizer/backend/gen/contracts/dataset/v1"
-	"chart-organizer/backend/internal/middleware"
+	"chart-organizer/backend/internal/interceptors"
 	"chart-organizer/backend/internal/repository/dataset"
 	"context"
 	"database/sql"
@@ -26,7 +26,7 @@ func (h *DatasetHandler) GetDataset(
 	ctx context.Context,
 	req *connect.Request[datasetv1.GetDatasetRequest],
 ) (*connect.Response[datasetv1.GetDatasetResponse], error) {
-	userId, found := middleware.GetUserId(ctx)
+	userId, found := interceptors.GetUserId(ctx)
 	if !found {
 		return nil, connect.NewError(connect.CodeUnauthenticated, errors.New("unauthenticated"))
 	}
@@ -51,7 +51,7 @@ func (h *DatasetHandler) UploadDataset(
 	req *connect.Request[datasetv1.UploadDatasetRequest],
 ) (*connect.Response[datasetv1.UploadDatasetResponse], error) {
 	// Get userId or return error
-	userId, found := middleware.GetUserId(ctx)
+	userId, found := interceptors.GetUserId(ctx)
 	slog.Info(fmt.Sprintf("User id: %s", userId))
 	if !found {
 		return nil, connect.NewError(connect.CodeUnauthenticated, errors.New("unauthenticated"))
@@ -72,7 +72,7 @@ func (h *DatasetHandler) GetAllDatasetsFromUser(
 	ctx context.Context,
 	req *connect.Request[datasetv1.GetAllDatasetsFromUserRequest],
 ) (*connect.Response[datasetv1.GetAllDatasetsFromUserResponse], error) {
-	userId, found := middleware.GetUserId(ctx)
+	userId, found := interceptors.GetUserId(ctx)
 	if !found {
 		return nil, connect.NewError(connect.CodeUnauthenticated, errors.New("unauthenticated"))
 	}

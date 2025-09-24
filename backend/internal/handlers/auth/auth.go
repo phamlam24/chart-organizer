@@ -13,7 +13,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 
 	authv1 "chart-organizer/backend/gen/contracts/auth/v1"
-	"chart-organizer/backend/internal/middleware"
+	"chart-organizer/backend/internal/interceptors"
 	authRepo "chart-organizer/backend/internal/repository/auth"
 )
 
@@ -25,7 +25,7 @@ func generateJWT(username string, userID string) (string, error) {
 	jwtKey := []byte(os.Getenv("JWT_KEY"))
 	currentTime := time.Now()
 	expirationTime := currentTime.Add(24 * time.Hour)
-	claims := &middleware.Claims{
+	claims := &interceptors.Claims{
 		Username: username,
 		UserID:   userID,
 		RegisteredClaims: jwt.RegisteredClaims{

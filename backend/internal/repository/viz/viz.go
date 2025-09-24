@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 func AddNewDashboard(db *sql.DB, userId string, datasetId string, visualizations []*vizv1.Visualization) (string, error) {
@@ -16,13 +17,28 @@ func AddNewDashboard(db *sql.DB, userId string, datasetId string, visualizations
 	// Get the current time
 	currentTime := time.Now().Format(time.RFC3339)
 
-	visualizationsJson, err := json.Marshal(visualizations)
-	if err != nil {
-		return "", err
+	// Marshal each visualization using protojson
+	var jsonVizs [][]byte
+	for _, viz := range visualizations {
+		vizJson, err := protojson.Marshal(viz)
+		if err != nil {
+			return "", err
+		}
+		jsonVizs = append(jsonVizs, vizJson)
 	}
 
+	// Combine into a JSON array
+	visualizationsJson := "["
+	for i, vizJson := range jsonVizs {
+		if i > 0 {
+			visualizationsJson += ","
+		}
+		visualizationsJson += string(vizJson)
+	}
+	visualizationsJson += "]"
+
 	// Insert the dataset into our SQL database
-	_, err = db.Exec("INSERT INTO dashboards (id, dataset_id, visualizations, created_at) VALUES (?, ?, ?, ?)", id, datasetId, visualizationsJson, currentTime)
+	_, err := db.Exec("INSERT INTO dashboards (id, dataset_id, visualizations, created_at) VALUES (?, ?, ?, ?)", id, datasetId, visualizationsJson, currentTime)
 	if err != nil {
 		return "", err
 	}
@@ -42,10 +58,22 @@ func GetDashboard(db *sql.DB, id string) ([]*vizv1.Visualization, string, error)
 		return nil, "", err
 	}
 
-	var visualizations []*vizv1.Visualization
-	err = json.Unmarshal([]byte(visualizationsJson), &visualizations)
+	// First, unmarshal as raw JSON to get the array structure
+	var rawVizs []json.RawMessage
+	err = json.Unmarshal([]byte(visualizationsJson), &rawVizs)
 	if err != nil {
 		return nil, "", err
+	}
+
+	// Then unmarshal each visualization using protojson
+	var visualizations []*vizv1.Visualization
+	for _, rawViz := range rawVizs {
+		viz := &vizv1.Visualization{}
+		err = protojson.Unmarshal(rawViz, viz)
+		if err != nil {
+			return nil, "", err
+		}
+		visualizations = append(visualizations, viz)
 	}
 
 	return visualizations, datasetId, nil

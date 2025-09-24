@@ -9,7 +9,12 @@ import (
 	"github.com/google/uuid"
 )
 
-const datasetStorageFilePath = "../storage/datasets"
+func getDatasetStoragePath() string {
+	if path := os.Getenv("DATASET_STORAGE_PATH"); path != "" {
+		return path
+	}
+	return "./storage/datasets"
+}
 
 // Add a new dataset into our database.
 // First, an ID and timestamp is generated.
@@ -24,15 +29,18 @@ func AddNewDataset(db *sql.DB, userId string, name string, file []byte) (string,
 	// Get the current time
 	currentTime := time.Now().Format(time.RFC3339)
 
+	// Get storage path
+	storagePath := getDatasetStoragePath()
+
 	// Create the storage directory if it doesn't exist
-	err := os.MkdirAll(datasetStorageFilePath, 0755)
+	err := os.MkdirAll(storagePath, 0755)
 	if err != nil {
 		return "", err
 	}
 
 	// Create the file path with the generated ID + ".csv"
 	fileName := id + ".csv"
-	filePath := filepath.Join(datasetStorageFilePath, fileName)
+	filePath := filepath.Join(storagePath, fileName)
 
 	// Write the file bytes to storage
 	err = os.WriteFile(filePath, file, 0644)
@@ -56,7 +64,8 @@ func GetDataset(db *sql.DB, userId, id string) ([]byte, error) {
 		return nil, err
 	}
 
-	filePath := filepath.Join(datasetStorageFilePath, id+".csv")
+	storagePath := getDatasetStoragePath()
+	filePath := filepath.Join(storagePath, id+".csv")
 	fileBytes, err := os.ReadFile(filePath)
 	if err != nil {
 		return nil, err
