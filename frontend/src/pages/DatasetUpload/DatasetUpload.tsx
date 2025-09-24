@@ -74,7 +74,7 @@ const DatasetUpload: React.FC = () => {
       <div className="mt-8">
         <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md">
+            <div className="alert alert-error">
               {error}
             </div>
           )}
@@ -134,14 +134,14 @@ const DatasetUpload: React.FC = () => {
             <button
               type="button"
               onClick={() => navigate('/')}
-              className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="btn btn-secondary shadow-sm"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={!file || isUploading}
-              className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+              className="btn btn-primary shadow-sm"
             >
               {isUploading ? 'Uploading...' : 'Upload Dataset'}
             </button>

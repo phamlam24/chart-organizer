@@ -131,7 +131,7 @@ const PublicDashboard: React.FC = () => {
       <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         <div className="space-y-8">
           {dashboard.visualizations.map((viz, index) => (
-            <div key={index} className="bg-white shadow sm:rounded-lg">
+            <div key={index} className="chart-container">
               <div className="px-4 py-5 sm:p-6">
                 <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
                   {(viz.plot as any).title}

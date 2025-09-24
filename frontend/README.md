@@ -1,9 +1,5 @@
 # Frontend Implementation Summary
 
-## 🎯 What We've Built
-
-I've successfully implemented a comprehensive frontend skeleton for the Chart Organizer application. Here's what's been created:
-
 ## 📁 Project Structure
 
 ```
@@ -126,7 +122,7 @@ All API calls include:
 
 ## 🏃‍♂️ How to Run
 
-The frontend is currently running at: **http://localhost:5174**
+The frontend is currently running at: **http://localhost:3000**
 
 ### Commands:
 ```bash

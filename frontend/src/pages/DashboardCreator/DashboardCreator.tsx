@@ -185,14 +185,14 @@ const DashboardCreator: React.FC = () => {
         <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none space-x-2">
           <button
             onClick={() => setShowAddForm(true)}
-            className="inline-flex items-center justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            className="btn btn-primary shadow-sm"
           >
             Add Visualization
           </button>
           <button
             onClick={saveDashboard}
             disabled={visualizations.length === 0}
-            className="inline-flex items-center justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50"
+            className="btn btn-success shadow-sm"
           >
             Save Dashboard
           </button>
@@ -200,14 +200,14 @@ const DashboardCreator: React.FC = () => {
       </div>
 
       {error && (
-        <div className="mt-4 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md">
+        <div className="mt-4 alert alert-error">
           {error}
         </div>
       )}
 
       {/* Add Visualization Form */}
       {showAddForm && (
-        <div className="mt-6 bg-white shadow sm:rounded-lg">
+        <div className="mt-6 chart-container">
           <div className="px-4 py-5 sm:p-6">
             <h3 className="text-lg leading-6 font-medium text-gray-900">
               Add New Visualization
@@ -223,7 +223,7 @@ const DashboardCreator: React.FC = () => {
                 <select
                   value={newVizType}
                   onChange={(e) => setNewVizType(e.target.value as VisualizationType)}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="form-input mt-1 shadow-sm"
                 >
                   <option value="scatterplot">Scatter Plot</option>
                   <option value="lineplot">Line Plot</option>
@@ -239,7 +239,7 @@ const DashboardCreator: React.FC = () => {
                   type="text"
                   value={newVizConfig.title}
                   onChange={(e) => setNewVizConfig({ ...newVizConfig, title: e.target.value })}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="form-input mt-1 shadow-sm"
                   placeholder="Enter visualization title"
                 />
               </div>
@@ -256,7 +256,7 @@ const DashboardCreator: React.FC = () => {
                       ...newVizConfig,
                       columns: Array.from(e.target.selectedOptions, option => option.value)
                     })}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    className="form-input mt-1 shadow-sm"
                     size={Math.min(csvData.headers.length, 6)}
                   >
                     {csvData.headers.map(header => (
@@ -274,7 +274,7 @@ const DashboardCreator: React.FC = () => {
                     <select
                       value={newVizConfig.column_x}
                       onChange={(e) => setNewVizConfig({ ...newVizConfig, column_x: e.target.value })}
-                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="form-input mt-1 shadow-sm"
                     >
                       <option value="">Select X column</option>
                       {csvData.headers.map(header => (
@@ -289,7 +289,7 @@ const DashboardCreator: React.FC = () => {
                     <select
                       value={newVizConfig.column_y}
                       onChange={(e) => setNewVizConfig({ ...newVizConfig, column_y: e.target.value })}
-                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="form-input mt-1 shadow-sm"
                     >
                       <option value="">Select Y column</option>
                       {csvData.headers.map(header => (
@@ -306,13 +306,13 @@ const DashboardCreator: React.FC = () => {
                   setShowAddForm(false);
                   setError('');
                 }}
-                className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="btn btn-secondary shadow-sm"
               >
                 Cancel
               </button>
               <button
                 onClick={addVisualization}
-                className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                className="btn btn-primary shadow-sm"
               >
                 Add Visualization
               </button>
@@ -324,7 +324,7 @@ const DashboardCreator: React.FC = () => {
       {/* Visualizations */}
       <div className="mt-8 space-y-8">
         {visualizations.map((viz, index) => (
-          <div key={index} className="bg-white shadow sm:rounded-lg">
+          <div key={index} className="chart-container">
             <div className="px-4 py-5 sm:p-6">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg leading-6 font-medium text-gray-900">
