@@ -8,8 +8,8 @@ interface LinePlotChartProps {
 }
 
 const LinePlotChart: React.FC<LinePlotChartProps> = ({ data, config }) => {
-  const xIndex = data.headers.indexOf(config.column_x);
-  const yIndex = data.headers.indexOf(config.column_y);
+  const xIndex = data.headers.indexOf(config.columnX);
+  const yIndex = data.headers.indexOf(config.columnY);
 
   if (xIndex === -1 || yIndex === -1) {
     return (
@@ -46,8 +46,8 @@ const LinePlotChart: React.FC<LinePlotChartProps> = ({ data, config }) => {
 
   const layout = {
     title: { text: config.title },
-    xaxis: { title: { text: config.column_x } },
-    yaxis: { title: { text: config.column_y } },
+    xaxis: { title: { text: config.columnX } },
+    yaxis: { title: { text: config.columnY } },
     margin: { t: 50, r: 50, b: 50, l: 50 },
   };
 

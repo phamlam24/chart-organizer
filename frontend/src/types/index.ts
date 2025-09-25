@@ -46,26 +46,28 @@ export interface ParallelCoordinates {
 
 export interface Scatterplot {
   title: string;
-  column_x: string;
-  column_y: string;
+  columnX: string;
+  columnY: string;
 }
 
 export interface LinePlot {
   title: string;
-  column_x: string;
-  column_y: string;
+  columnX: string;
+  columnY: string;
 }
 
 export type VisualizationType = 'parallel_coordinates' | 'scatterplot' | 'lineplot';
 
 export interface Visualization {
   type: VisualizationType;
-  plot: ParallelCoordinates | Scatterplot | LinePlot;
+  parallelCoordinates?: ParallelCoordinates;
+  scatterplot?: Scatterplot;
+  lineplot?: LinePlot;
 }
 
 export interface CreateDashboardRequest {
   visualizations: Visualization[];
-  dataset_id: string;
+  datasetId: string;
 }
 
 export interface CreateDashboardResponse {
@@ -74,7 +76,7 @@ export interface CreateDashboardResponse {
 
 export interface GetDashboardResponse {
   visualizations: Visualization[];
-  dataset_id: string;
+  datasetId: string;
 }
 
 // CSV data structure

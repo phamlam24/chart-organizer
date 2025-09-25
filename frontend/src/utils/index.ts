@@ -44,19 +44,32 @@ export const loadDatasetCSV = async (datasetId: string): Promise<CSVData> => {
     throw new Error('Dataset ID is required');
   }
 
-  const blob = await datasetService.getDataset(datasetId);
-  
-  if (!blob || blob.size === 0) {
-    throw new Error('Dataset file is empty or not found');
+  try {
+    const blob = await datasetService.getDataset(datasetId);
+    
+    if (!blob) {
+      throw new Error('No data received from server');
+    }
+    
+    if (blob.size === 0) {
+      throw new Error('Dataset file is empty');
+    }
+    
+    const text = await blob.text();
+    
+    if (!text || text.trim().length === 0) {
+      throw new Error('Dataset file contains no data');
+    }
+    
+    return parseCSV(text);
+  } catch (error) {
+    console.error('Error loading dataset:', error);
+    if (error instanceof Error) {
+      throw new Error(`Failed to load dataset: ${error.message}`);
+    } else {
+      throw new Error('Failed to load dataset: Unknown error');
+    }
   }
-  
-  const text = await blob.text();
-  
-  if (!text || text.trim().length === 0) {
-    throw new Error('Dataset file contains no data');
-  }
-  
-  return parseCSV(text);
 };
 
 /**

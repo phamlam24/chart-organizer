@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { dashboardService } from '../../services/dashboardService';
 import { ParallelCoordinatesChart, ScatterplotChart, LinePlotChart } from '../../components/Charts';
 import { loadDatasetCSV } from '../../utils';
-import type { CSVData, Visualization, VisualizationType, ParallelCoordinates, Scatterplot, LinePlot } from '../../types';
+import type { CSVData, Visualization, VisualizationType } from '../../types';
 
 const DashboardCreator: React.FC = () => {
   const { datasetId } = useParams<{ datasetId: string }>();
@@ -18,8 +18,8 @@ const DashboardCreator: React.FC = () => {
   const [newVizConfig, setNewVizConfig] = useState({
     title: '',
     columns: [] as string[],
-    column_x: '',
-    column_y: '',
+    columnX: '',
+    columnY: '',
   });
 
   useEffect(() => {
@@ -58,7 +58,7 @@ const DashboardCreator: React.FC = () => {
       return;
     }
 
-    let plot: ParallelCoordinates | Scatterplot | LinePlot;
+    let newVisualization: Visualization;
 
     switch (newVizType) {
       case 'parallel_coordinates':
@@ -66,33 +66,49 @@ const DashboardCreator: React.FC = () => {
           setError('Please select at least 2 columns for parallel coordinates');
           return;
         }
-        plot = {
-          title: newVizConfig.title,
-          columns: newVizConfig.columns,
+        newVisualization = {
+          type: newVizType,
+          parallelCoordinates: {
+            title: newVizConfig.title,
+            columns: newVizConfig.columns,
+          },
         };
         break;
       case 'scatterplot':
-      case 'lineplot':
-        if (!newVizConfig.column_x || !newVizConfig.column_y) {
+        if (!newVizConfig.columnX || !newVizConfig.columnY) {
           setError('Please select both X and Y columns');
           return;
         }
-        plot = {
-          title: newVizConfig.title,
-          column_x: newVizConfig.column_x,
-          column_y: newVizConfig.column_y,
+        newVisualization = {
+          type: newVizType,
+          scatterplot: {
+            title: newVizConfig.title,
+            columnX: newVizConfig.columnX,
+            columnY: newVizConfig.columnY,
+          },
         };
         break;
+      case 'lineplot':
+        if (!newVizConfig.columnX || !newVizConfig.columnY) {
+          setError('Please select both X and Y columns');
+          return;
+        }
+        newVisualization = {
+          type: newVizType,
+          lineplot: {
+            title: newVizConfig.title,
+            columnX: newVizConfig.columnX,
+            columnY: newVizConfig.columnY,
+          },
+        };
+        break;
+      default:
+        return;
     }
-
-    const newVisualization: Visualization = {
-      type: newVizType,
-      plot,
-    };
 
     setVisualizations([...visualizations, newVisualization]);
     setShowAddForm(false);
-    setNewVizConfig({ title: '', columns: [], column_x: '', column_y: '' });
+    setNewVizConfig({ title: '', columns: [], columnX: '', columnY: '' });
     setError('');
   };
 
@@ -110,7 +126,7 @@ const DashboardCreator: React.FC = () => {
       setIsLoading(true);
       const response = await dashboardService.createDashboard({
         visualizations,
-        dataset_id: datasetId!,
+        datasetId: datasetId!,
       });
       
       alert(`Dashboard created! Share this link: ${window.location.origin}/dashboard/${response.id}`);
@@ -131,7 +147,7 @@ const DashboardCreator: React.FC = () => {
           <ParallelCoordinatesChart
             key={index}
             data={csvData}
-            config={viz.plot as ParallelCoordinates}
+            config={viz.parallelCoordinates!}
           />
         );
       case 'scatterplot':
@@ -139,7 +155,7 @@ const DashboardCreator: React.FC = () => {
           <ScatterplotChart
             key={index}
             data={csvData}
-            config={viz.plot as Scatterplot}
+            config={viz.scatterplot!}
           />
         );
       case 'lineplot':
@@ -147,7 +163,7 @@ const DashboardCreator: React.FC = () => {
           <LinePlotChart
             key={index}
             data={csvData}
-            config={viz.plot as LinePlot}
+            config={viz.lineplot!}
           />
         );
       default:
@@ -272,8 +288,8 @@ const DashboardCreator: React.FC = () => {
                       X-axis Column
                     </label>
                     <select
-                      value={newVizConfig.column_x}
-                      onChange={(e) => setNewVizConfig({ ...newVizConfig, column_x: e.target.value })}
+                      value={newVizConfig.columnX}
+                      onChange={(e) => setNewVizConfig({ ...newVizConfig, columnX: e.target.value })}
                       className="form-input mt-1 shadow-sm"
                     >
                       <option value="">Select X column</option>
@@ -287,8 +303,8 @@ const DashboardCreator: React.FC = () => {
                       Y-axis Column
                     </label>
                     <select
-                      value={newVizConfig.column_y}
-                      onChange={(e) => setNewVizConfig({ ...newVizConfig, column_y: e.target.value })}
+                      value={newVizConfig.columnY}
+                      onChange={(e) => setNewVizConfig({ ...newVizConfig, columnY: e.target.value })}
                       className="form-input mt-1 shadow-sm"
                     >
                       <option value="">Select Y column</option>
@@ -328,7 +344,7 @@ const DashboardCreator: React.FC = () => {
             <div className="px-4 py-5 sm:p-6">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg leading-6 font-medium text-gray-900">
-                  {(viz.plot as any).title} ({viz.type.replace('_', ' ')})
+                  {viz.parallelCoordinates?.title || viz.scatterplot?.title || viz.lineplot?.title} ({viz.type.replace('_', ' ')})
                 </h3>
                 <button
                   onClick={() => removeVisualization(index)}

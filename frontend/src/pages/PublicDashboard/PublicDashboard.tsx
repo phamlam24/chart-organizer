@@ -5,7 +5,7 @@ import ParallelCoordinatesChart from '../../components/Charts/ParallelCoordinate
 import ScatterplotChart from '../../components/Charts/ScatterplotChart';
 import LinePlotChart from '../../components/Charts/LinePlotChart';
 import { loadDatasetCSV } from '../../utils';
-import type { CSVData, Visualization, GetDashboardResponse, ParallelCoordinates, Scatterplot, LinePlot } from '../../types';
+import type { CSVData, Visualization, GetDashboardResponse } from '../../types';
 
 const PublicDashboard: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -34,7 +34,7 @@ const PublicDashboard: React.FC = () => {
       setDashboard(dashboardData);
 
       // Load the associated dataset
-      const parsed = await loadDatasetCSV(dashboardData.dataset_id);
+      const parsed = await loadDatasetCSV(dashboardData.datasetId);
       setCsvData(parsed);
     } catch (err) {
       console.error('Error loading dashboard:', err);
@@ -57,7 +57,7 @@ const PublicDashboard: React.FC = () => {
           <ParallelCoordinatesChart
             key={index}
             data={csvData}
-            config={viz.plot as ParallelCoordinates}
+            config={viz.parallelCoordinates!}
           />
         );
       case 'scatterplot':
@@ -65,7 +65,7 @@ const PublicDashboard: React.FC = () => {
           <ScatterplotChart
             key={index}
             data={csvData}
-            config={viz.plot as Scatterplot}
+            config={viz.scatterplot!}
           />
         );
       case 'lineplot':
@@ -73,7 +73,7 @@ const PublicDashboard: React.FC = () => {
           <LinePlotChart
             key={index}
             data={csvData}
-            config={viz.plot as LinePlot}
+            config={viz.lineplot!}
           />
         );
       default:
@@ -134,7 +134,7 @@ const PublicDashboard: React.FC = () => {
             <div key={index} className="chart-container">
               <div className="px-4 py-5 sm:p-6">
                 <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
-                  {(viz.plot as any).title}
+                  {viz.parallelCoordinates?.title || viz.scatterplot?.title || viz.lineplot?.title}
                 </h3>
                 {renderChart(viz, index)}
               </div>
