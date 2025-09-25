@@ -9,20 +9,25 @@ RUN go install github.com/bufbuild/buf/cmd/buf@latest && \
     go install google.golang.org/protobuf/cmd/protoc-gen-go@latest && \
     go install connectrpc.com/connect/cmd/protoc-gen-connect-go@latest
 
+# Copy buf configuration files first
+COPY buf.gen.yaml buf.gen.yaml
+COPY buf.yaml buf.yaml
+COPY contracts contracts
+
+# Generate code from protobuf files (this will create backend/gen directory)
+RUN buf generate
+
+# Now set up the Go workspace in the backend subdirectory
+WORKDIR /app/backend
+
 # Copy go mod and sum files
 COPY backend/go.mod backend/go.sum ./
 
 # Download dependencies
 RUN go mod download
 
-# Copy the source code (including contracts and buf config files from root)
+# Copy the backend source code
 COPY backend/ .
-COPY contracts contracts
-COPY buf.gen.yaml buf.gen.yaml
-COPY buf.yaml buf.yaml
-
-# Generate code from protobuf files
-RUN buf generate
 
 # Build the application
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main ./cmd/main.go
@@ -38,7 +43,7 @@ WORKDIR /root/
 RUN mkdir -p storage
 
 # Copy the pre-built binary file from the previous stage
-COPY --from=builder /app/main .
+COPY --from=builder /app/backend/main .
 
 # Create a basic .env file if it doesn't exist
 RUN echo "JWT_KEY=your-super-secret-jwt-key-change-me-in-production" > .env
