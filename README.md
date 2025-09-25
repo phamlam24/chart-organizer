@@ -12,7 +12,7 @@ This document provides comprehensive instructions for running the Chart Organize
 
 1. **Clone the repository** (if you haven't already):
    ```bash
-   git clone [<repository-url>](https://github.com/phamlam24/chart-organizer.git)
+   git clone https://github.com/phamlam24/chart-organizer.git
    cd chart-organizer
    ```
 
